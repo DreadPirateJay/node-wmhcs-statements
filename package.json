@@ -1,0 +1,17 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "~3.1.0",
+    "jade": "*",
+    "request": ">=1.2.0",
+    "q": ">=0.9.2",
+    "underscore": ">=1.4.4",
+    "backbone": ">=1.0.0",
+    "moment": "*"
+  }
+}

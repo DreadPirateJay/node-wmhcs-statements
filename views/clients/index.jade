@@ -1,0 +1,17 @@
+extends ../layout
+
+block content
+	h3 Client List
+	table.table.table-striped.table-bordered
+		thead
+			th
+			th Name
+			th Company
+			th Email
+		tbody
+			each client in clients
+				tr
+					td: a(href="/statements/#{client.id}") Statment
+					td= client.firstname + ' ' + client.lastname
+					td= client.companyname
+					td= client.email
