@@ -1,7 +1,7 @@
 // Filename: routes/email.js
 
 var	Clients			= require('../models/clients')
-	, Statement		= require('../models/statement')
+	, winston			= require('winston')
 	, _						= require('underscore')
 	, Emailer 		= require('../lib/emailer');
 
@@ -10,6 +10,13 @@ var EmailController = {
 	send: function(req, res) {
 		var self = this;
 		var emailer = new Emailer();
+
+		var logger = new winston.Logger({
+			transports: [
+				new winston.transports.Console(),
+				new winston.transports.File({ filename: './logs/mailer.log' })
+			]
+		});
 
 		this.fetchClients(function(clients) {
 			_.each(clients, function(client) {
@@ -32,9 +39,9 @@ var EmailController = {
 
 				emailer.send(options, data, function(err, result) {
 					if (err) {
-						console.log('ERROR: ' + err);
+						logger.error(err);
 					} else {
-						console.log(result);
+						logger.info({ type: 'success', email: client.email, date: new Date(), result: result });
 					}
 				});
 
