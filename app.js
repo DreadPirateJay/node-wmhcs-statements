@@ -2,7 +2,7 @@
 
 // Import nodejs modules
 var express = require('express')
-  , routes = require('./routes')
+  , email = require('./routes/email')
   , clients = require('./routes/clients')
   , statements = require('./routes/statements')
   , http = require('http')
@@ -31,7 +31,7 @@ app.configure('development', function(){
 
 // Application routes
 // Route functions are defined in files in the /routes directory
-app.get('/', routes.index);
+app.get('/send', email.send);
 app.get('/clients/', clients.index);
 app.get('/statements/:clientid', statements.index);
 
