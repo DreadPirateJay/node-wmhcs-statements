@@ -2,52 +2,59 @@
 
 var	Clients			= require('../models/clients')
 	, Statement		= require('../models/statement')
-	, Emailer			= require('nodemailer')
-	, Q						= require('q')
+	, _						= require('underscore')
 	, Emailer 		= require('../lib/emailer');
 
 var EmailController = {
 
 	send: function(req, res) {
 		var self = this;
+		var emailer = new Emailer();
 
-		options = {
-			to: {
-				email: 'jearwood@usnx.com',
-				firstname: 'Jay',
-				lastname: 'Earwood'
-			},
-			subject: 'Mailer Test'
-		};
+		this.fetchClients(function(clients) {
+			_.each(clients, function(client) {
 
-		data = {
-			test: 'test'
-		};
+				options = {
+					to: {
+						email: 'jearwood@usnx.com',
+						firstname: client.firstname,
+						lastname: client.lastname
+					},
+					subject: 'Your U.S. NetworX Statement is Ready',
+					template: 'statement-ready'
+				};
 
-		emailer = new Emailer(options, data);
-		emailer.send(function(err, result) {
-			if (err) {
-				res.send('ERROR: ' + err);
-			} else {
-				res.send(result);
-			}
+				data = {
+					id: client.id,
+					firstname: client.firstname,
+					lastname: client.lastname
+				};
+
+				emailer.send(options, data, function(err, result) {
+					if (err) {
+						console.log('ERROR: ' + err);
+					} else {
+						console.log(result);
+					}
+				});
+
+			}, this);
 		});
+
+		res.send('Emails Sent!');
 	},
 
-	fetchClients: function() {
+	fetchClients: function(callback, error) {
 		var clients = new Clients();
-		var deferred = Q.defer();
 
 		clients.fetch({
 			success: function(clients) {
-				deferred.resolve(clients.toJSON());
+				callback(clients.toJSON());
 			},
-			error: function(collection, xhr) {
-				deferred.reject(xhr);
+			error: function(models, xhr) {
+				error(xhr);
 			}
 		});
-
-		return deferred.promise;
 	},
 };
 
